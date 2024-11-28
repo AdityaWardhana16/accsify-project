@@ -1,14 +1,14 @@
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Kategori(models.Model):
-    name = models.CharField(max_length=10, unique=True, verbose_name="Nama Kategori")
+    name = models.CharField(max_length=50, unique=True, verbose_name="Nama Kategori")
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(verbose_name="Deskripsi", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
-    price = models.DecimalField(blank=False)
+   # price = None #models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Harga")
 
     class Meta:
         verbose_name = "Kategori"
@@ -35,8 +35,8 @@ class Product(models.Model):
     stock_diskon = models.PositiveIntegerField(verbose_name="Stok Diskon")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
-    merek_produk = models.ChartField(max_length=7)
-    bahan = models.ChartField(max_length= 10)
+    merek_produk = models.CharField(max_length=50)
+    bahan = models.CharField(max_length= 50)
     
     is_active = models.BooleanField(default=True, verbose_name="Aktif")
 
@@ -54,7 +54,7 @@ class Product(models.Model):
         return self.name
     
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -70,7 +70,7 @@ class CartItem(models.Model):
         return f"{self.quantity} of {self.product.name}"
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, related_name='orders')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     order_date = models.DateTimeField(auto_now_add=True)
