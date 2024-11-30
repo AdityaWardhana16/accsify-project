@@ -1,14 +1,19 @@
+#apabila belum memiliki APP, silahkan membuatnya terlebih dahulu.
+# python manage.py startapp shop
+
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
 
+
+
 class Kategori(models.Model):
-    name = models.CharField(max_length=50, unique=True, verbose_name="Nama Kategori")
+    name = models.CharField(max_length=25, unique=True, verbose_name="Nama Kategori")
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(verbose_name="Deskripsi", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
-   # price = None #models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Harga")
+    #price = models.DecimalField(blank=False)
 
     class Meta:
         verbose_name = "Kategori"
@@ -22,23 +27,22 @@ class Kategori(models.Model):
 
     def __str__(self):
         return self.name
-    
-#python manage.py makemigrations
-#python manage.py migrate
+
 class Product(models.Model):
-    name = models.TextField(unique=True, verbose_name="Nama Produk")
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
-    description = models.TextField(verbose_name="Deskripsi", blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Harga")
-    category = models.ForeignKey(Kategori, on_delete=models.CASCADE, related_name='products', verbose_name="Kategori")
+    name = models.CharField(max_length=50, unique=True, verbose_name="Nama Produk")
+    slug = models.SlugField(max_length=50, unique=True, blank=True)
+    description = models.TextField(verbose_name="Deskripsi", blank=True)
+    price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Harga")
+    category = models.ForeignKey('Kategori', on_delete=models.CASCADE, related_name='products', verbose_name="Kategori")
     stock_produk = models.PositiveIntegerField(verbose_name="Stok")
     stock_diskon = models.PositiveIntegerField(verbose_name="Stok Diskon")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
     merek_produk = models.CharField(max_length=50)
-    bahan = models.CharField(max_length= 50)
-    
     is_active = models.BooleanField(default=True, verbose_name="Aktif")
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
+
+
 
     class Meta:
         verbose_name = "Produk"
@@ -58,7 +62,6 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        
         return f"Cart {self.id} for {self.user.username}"
 
 class CartItem(models.Model):
@@ -68,7 +71,7 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
-
+    
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, related_name='orders')
@@ -87,4 +90,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} for order {self.order.id}"
-

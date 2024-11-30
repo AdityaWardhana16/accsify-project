@@ -86,7 +86,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'Ac2?csify1601!@#',
         'HOST': 'localhost',
-        'PORT': '3307'
+        'PORT': '3307',
     }
 }
 
@@ -134,3 +134,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+MEDIA_URL = '/media/'  # URL untuk akses file media
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Lokasi folder untuk menyimpan file media

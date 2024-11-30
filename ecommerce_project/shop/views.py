@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 from .models import Kategori, Product, Cart, Order, OrderItem
 from django.http import Http404
 
+# Create your views here.
 class KategoriListView(ListView):
     model = Kategori
     template_name = 'shop/kategori_list.html'
@@ -29,7 +30,7 @@ class CartDetailView(DetailView):
             return Cart.objects.get(user=user)
         except Cart.DoesNotExist:
             raise Http404("Cart does not exist")
-
+        
 class OrderListView(ListView):
     model = Order
     template_name = 'shop/order_list.html'
@@ -37,7 +38,7 @@ class OrderListView(ListView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
-
+    
 class OrderDetailView(DetailView):
     model = Order
     template_name = 'shop/order_detail.html'
@@ -48,3 +49,4 @@ class OrderDetailView(DetailView):
         if obj.user != self.request.user:
             raise Http404("You are not authorized to view this order.")
         return obj
+

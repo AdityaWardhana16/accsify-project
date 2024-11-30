@@ -1,0 +1,69 @@
+<!-- shop/templates/shop/cart_detail.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Keranjang</title>
+    <!-- Tambahkan CSS atau framework seperti Bootstrap jika diperlukan -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Detail Keranjang Belanja</h1>
+
+        {% if cart.items.count > 0 %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Produk</th>
+                    <th scope="col">Harga</th>
+                    <th scope="col">Jumlah</th>
+                    <th scope="col">Subtotal</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>Rp {{ item.product.price|floatformat:2 }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'update_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control w-25" required>
+                            <button type="submit" class="btn btn-sm btn-warning mt-2">Perbarui</button>
+                        </form>
+                    </td>
+                    <td>Rp {{ item.product.price|floatformat:2|multiply:item.quantity }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-6 offset-md-6">
+                <h3 class="text-end">Total: Rp {{ cart.total_price|floatformat:2 }}</h3>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Kembali Belanja</a>
+        </div>
+
+        {% else %}
+        <p class="text-center">Keranjang Anda kosong. <a href="{% url 'product_list' %}">Tambahkan Produk</a></p>
+        {% endif %}
+    </div>
+
+    <!-- Script JS (opsional, jika menggunakan Bootstrap atau lainnya) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
